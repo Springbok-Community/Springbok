@@ -256,8 +256,8 @@ static UniValue addnode(const JSONRPCRequest& request)
                 },
                 RPCResult{RPCResult::Type::NONE, "", ""},
                 RPCExamples{
-                    HelpExampleCli("addnode", "\"192.168.0.6:11110\" \"onetry\"")
-            + HelpExampleRpc("addnode", "\"192.168.0.6:11110\", \"onetry\"")
+                    HelpExampleCli("addnode", "\"192.168.0.6:11961\" \"onetry\"")
+            + HelpExampleRpc("addnode", "\"192.168.0.6:11961\", \"onetry\"")
                 },
             }.ToString());
 
@@ -301,9 +301,9 @@ static UniValue disconnectnode(const JSONRPCRequest& request)
                 },
                 RPCResult{RPCResult::Type::NONE, "", ""},
                 RPCExamples{
-                    HelpExampleCli("disconnectnode", "\"192.168.0.6:11110\"")
+                    HelpExampleCli("disconnectnode", "\"192.168.0.6:11961\"")
             + HelpExampleCli("disconnectnode", "\"\" 1")
-            + HelpExampleRpc("disconnectnode", "\"192.168.0.6:11110\"")
+            + HelpExampleRpc("disconnectnode", "\"192.168.0.6:11961\"")
             + HelpExampleRpc("disconnectnode", "\"\", 1")
                 },
             }.ToString());
@@ -350,7 +350,7 @@ static UniValue getaddednodeinfo(const JSONRPCRequest& request)
             "    \"connected\" : true|false,          (boolean) If connected\n"
             "    \"addresses\" : [                    (list of objects) Only when connected = true\n"
             "       {\n"
-            "         \"address\" : \"192.168.0.201:11110\",  (string) The springbok server IP and port we're connected to\n"
+            "         \"address\" : \"192.168.0.201:11961\",  (string) The springbok server IP and port we're connected to\n"
             "         \"connected\" : \"outbound\"           (string) connection, inbound or outbound\n"
             "       }\n"
             "     ]\n"

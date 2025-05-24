@@ -122,8 +122,8 @@ sudo apt install ufw &&
 sudo ufw default deny incoming &&
 sudo ufw default allow outgoing &&
 sudo ufw allow ssh &&
-sudo ufw allow 11110/tcp &&
-sudo ufw allow 22220/tcp &&
+sudo ufw allow 11961/tcp &&
+sudo ufw allow 11960/tcp &&
 sudo ufw enable
 ```
 
