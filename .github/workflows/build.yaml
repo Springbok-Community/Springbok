@@ -175,60 +175,6 @@
               name: ${{ env.COIN_NAME }}-macos12-dmg-${{ env.BUILD_VERSION }}
               path: springbok-Qt.dmg
               
-      build-ubuntu20:
-        name: Ubuntu 20 build
-        needs: checking-build-version
-        runs-on: ubuntu-20.04
-        steps:
-          - name: Checkout
-            uses: actions/checkout@v4
-          - name: Getting Version
-            uses: actions/download-artifact@v4
-          - name: Install Required Packages
-            run: |
-              sudo apt-get update -y
-              sudo apt-get upgrade -y
-              sudo apt-get install curl build-essential libtool autotools-dev automake pkg-config python3 bsdmainutils cmake
-          - name: build depends
-            run: |
-              echo "building with $(nproc) threads"
-              export FALLBACK_DOWNLOAD_PATH=https://pool.nowput.org/depends/
-              make -C depends -j$(nproc)
-          - name: configure
-            run: |
-              ./autogen.sh
-              ./configure --prefix=`pwd`/depends/x86_64-pc-linux-gnu
-          - name: build binary
-            run: |
-              make -j$(nproc)
-              mkdir -p $BUILD_DIR
-              mv src/{springbok-cli,springbokd,qt/springbok-qt} $BUILD_DIR/
-              strip $BUILD_DIR/*
-          - name: generate checksum and compress
-            run: |
-              echo "buildng $BUILD_VERSION version"
-              cd $BUILD_DIR
-              echo "sha256:" >> checksums.txt
-              echo "------------------------------------" >> checksums.txt
-              shasum * >> checksums.txt
-              echo "------------------------------------" >> checksums.txt
-              echo "openssl-sha256:" >> checksums.txt
-              echo "------------------------------------" >> checksums.txt
-              sha256sum * >> checksums.txt
-              cat checksums.txt
-              cd ..
-              tar -cvzf ${COIN_NAME}-ubuntu20-${{ needs.get-version.outputs.version }}.tar.gz $BUILD_DIR/*
-              mkdir -p ${COMPRESS_DIR}
-              mv ${COIN_NAME}-ubuntu20-${{ needs.get-version.outputs.version }}.tar.gz ${COMPRESS_DIR}/
-              shasum ${COMPRESS_DIR}/${COIN_NAME}-ubuntu20-${{ needs.get-version.outputs.version }}.tar.gz >> ${COMPRESS_DIR}/checksums.txt
-              sha256sum ${COMPRESS_DIR}/${COIN_NAME}-ubuntu20-${{ needs.get-version.outputs.version }}.tar.gz >> ${COMPRESS_DIR}/checksums.txt
-              cat ${COMPRESS_DIR}/checksums.txt
-          - name: Upload Artifact
-            uses: actions/upload-artifact@v4
-            with:
-              name: ${{ env.COIN_NAME }}-ubuntu20-${{ env.BUILD_VERSION }}
-              path: ${{ env.COMPRESS_DIR }}
-              
       build-ubuntu22:
         name: Ubuntu 22 build
         needs: checking-build-version
@@ -283,118 +229,105 @@
               name: ${{ env.COIN_NAME }}-ubuntu22-${{ env.BUILD_VERSION }}
               path: ${{ env.COMPRESS_DIR }}
               
-      build-win:
-        name: Windows build
-        needs: checking-build-version
-        runs-on: ubuntu-20.04
-        steps:
-          - name: Checkout
-            uses: actions/checkout@v4
-          - name: Getting Version
-            uses: actions/download-artifact@v4
-          - name: Install Required Packages
-            run: |
-              sudo apt-get update -y
-              sudo apt-get upgrade -y
-              sudo apt-get install curl build-essential libtool autotools-dev automake pkg-config python3 bsdmainutils cmake
-              sudo apt-get install -y g++-mingw-w64-x86-64 gcc-mingw-w64-x86-64
-              sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
-              sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
-          - name: build depends
-            run: |
-              echo "building with $(nproc) threads"
-              export FALLBACK_DOWNLOAD_PATH=https://pool.nowput.org/depends/
-              make -C depends -j$(nproc) HOST=x86_64-w64-mingw32
-          - name: configure
-            run: |
-              ./autogen.sh
-              ./configure --prefix=`pwd`/depends/x86_64-w64-mingw32
-          - name: build binary
-            run: |
-              make -j$(nproc)
-              mkdir -p $BUILD_DIR
-              mv src/{springbok-cli.exe,springbokd.exe,qt/springbok-qt.exe} $BUILD_DIR/
-              strip $BUILD_DIR/*
-          - name: generate checksum and compress
-            run: |
-              echo "buildng $BUILD_VERSION version"
-              cd $BUILD_DIR
-              echo "sha256:" >> checksums.txt
-              echo "------------------------------------" >> checksums.txt
-              shasum * >> checksums.txt
-              echo "------------------------------------" >> checksums.txt
-              echo "openssl-sha256:" >> checksums.txt
-              echo "------------------------------------" >> checksums.txt
-              sha256sum * >> checksums.txt
-              cat checksums.txt
-              cd ..
-              zip -r ${COIN_NAME}-win-${{ needs.get-version.outputs.version }}.zip $BUILD_DIR/
-              mkdir -p ${COMPRESS_DIR}
-              mv ${COIN_NAME}-win-${{ needs.get-version.outputs.version }}.zip ${COMPRESS_DIR}/
-              shasum ${COMPRESS_DIR}/${COIN_NAME}-win-${{ needs.get-version.outputs.version }}.zip >> ${COMPRESS_DIR}/checksums.txt
-              sha256sum ${COMPRESS_DIR}/${COIN_NAME}-win-${{ needs.get-version.outputs.version }}.zip >> ${COMPRESS_DIR}/checksums.txt
-              cat ${COMPRESS_DIR}/checksums.txt
-          - name: Upload Binary Artifacts
-            uses: actions/upload-artifact@v4
-            with:
-              name: ${{ env.COIN_NAME }}-win-${{ env.BUILD_VERSION }}
-              path: ${{ env.COMPRESS_DIR }}
-  
-      build-ubuntu20-arm-64:
-        name: Ubuntu 20 ARM 64 bit build
-        needs: checking-build-version
-        runs-on: ubuntu-20.04
-        steps:
-          - name: Checkout
-            uses: actions/checkout@v4
-          - name: Getting Version
-            uses: actions/download-artifact@v4
-          - name: Install Required Packages
-            run: |
-              sudo apt-get update -y
-              sudo apt-get upgrade -y
-              sudo apt-get install curl build-essential libtool g++-aarch64-linux-gnu autotools-dev automake pkg-config python3 bsdmainutils cmake
-          - name: build depends
-            run: |
-              echo "building with $(nproc) threads"
-              export FALLBACK_DOWNLOAD_PATH=https://pool.nowput.org/depends/
-              make -C depends -j$(nproc) HOST=aarch64-linux-gnu
-          - name: configure
-            run: |
-              ./autogen.sh
-              ./configure --prefix=`pwd`/depends/aarch64-linux-gnu
-          - name: build binary
-            run: |
-              make -j$(nproc)
-              mkdir -p $BUILD_DIR
-              mv src/{springbok-cli,springbokd,qt/springbok-qt} $BUILD_DIR/
-          - name: generate checksum and compress binary
-            run: |
-              echo "buildng $BUILD_VERSION version"
-              cd $BUILD_DIR
-              echo "sha256:" >> checksums.txt
-              echo "------------------------------------" >> checksums.txt
-              shasum * >> checksums.txt
-              echo "------------------------------------" >> checksums.txt
-              echo "openssl-sha256:" >> checksums.txt
-              echo "------------------------------------" >> checksums.txt
-              sha256sum * >> checksums.txt
-              cat checksums.txt
-              cd ..
-              tar -cvzf ${COIN_NAME}-arm64-${{ needs.get-version.outputs.version }}.tar.gz $BUILD_DIR/*
-              mkdir -p ${COMPRESS_DIR}
-              mv ${COIN_NAME}-arm64-${{ needs.get-version.outputs.version }}.tar.gz ${COMPRESS_DIR}/
-              cd ${COMPRESS_DIR}
-              echo "sha256: `shasum ${COIN_NAME}-arm64-${{ needs.get-version.outputs.version }}.tar.gz`" >> checksums.txt
-              echo "openssl-sha256: `sha256sum ${COIN_NAME}-arm64-${{ needs.get-version.outputs.version }}.tar.gz`" >> checksums.txt
-              cat checksums.txt
-              cd ..
-          - name: Upload Binary Artifacts
-            uses: actions/upload-artifact@v4
-            with:
-              name: ${{ env.COIN_NAME }}-ubuntu20-arm64-${{ env.BUILD_VERSION }}
-              path: ${{ env.COMPRESS_DIR }}
+  build-win64:
+    name: Win64 Build
+    needs: get-version
+    runs-on: ubuntu-22.04
 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Required Packages
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install curl build-essential libtool autotools-dev automake pkg-config python3 bsdmainutils cmake -y
+          sudo apt-get install -y g++-mingw-w64-x86-64 gcc-mingw-w64-x86-64 nsis
+          sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
+          sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+
+      - name: Build Depends
+        run: |
+          echo "building with $(nproc) threads"
+          export FALLBACK_DOWNLOAD_PATH=https://pool.nowput.org/depends/
+          make -C depends -j$(nproc) HOST=x86_64-w64-mingw32
+
+      - name: Configure
+        run: |
+          ./autogen.sh
+          export FALLBACK_DOWNLOAD_PATH=https://pool.nowput.org/depends/
+          ./configure --prefix=`pwd`/depends/x86_64-w64-mingw32
+
+      - name: Build Binaries
+        run: |
+          make -j$(nproc)
+          mkdir -p ${BUILD_DIR} ${BUILD_DIR}_not_strip ${TEST_DIR}
+          cp src/{yerbas-cli.exe,yerbasd.exe,qt/yerbas-qt.exe} ${BUILD_DIR}/
+          mv src/{yerbas-cli.exe,yerbasd.exe,qt/yerbas-qt.exe} ${BUILD_DIR}_not_strip/
+          mv src/test/test_yerbas.exe ${TEST_DIR}
+          strip ${BUILD_DIR}/*
+
+      - name: Generate Checksum and Compress
+        run: |
+          cd ${BUILD_DIR}
+          echo "sha256:" >> checksums.txt
+          echo "------------------------------------" >> checksums.txt
+          shasum * >> checksums.txt
+          echo "------------------------------------" >> checksums.txt
+          echo "openssl-sha256:" >> checksums.txt
+          echo "------------------------------------" >> checksums.txt
+          sha256sum * >> checksums.txt
+          cat checksums.txt
+          zip -r ../${COIN_NAME}-win-${{ needs.get-version.outputs.version }}.zip .
+          cd ../${BUILD_DIR}_not_strip
+          echo "sha256:" >> checksums.txt
+          echo "------------------------------------" >> checksums.txt
+          shasum * >> checksums.txt
+          echo "------------------------------------" >> checksums.txt
+          echo "openssl-sha256:" >> checksums.txt
+          echo "------------------------------------" >> checksums.txt
+          sha256sum * >> checksums.txt
+          cat checksums.txt
+          zip -r ../${COIN_NAME}-win-not_strip-${{ needs.get-version.outputs.version }}.zip .
+          cd ..
+          mkdir -p ${COMPRESS_DIR}
+          mv *.zip ${COMPRESS_DIR}/
+          cd ${COMPRESS_DIR}
+          echo "sha256:         `shasum    ${COIN_NAME}-win-${{ needs.get-version.outputs.version }}.zip`" >> checksums.txt
+          echo "openssl-sha256: `sha256sum ${COIN_NAME}-win-${{ needs.get-version.outputs.version }}.zip`" >> checksums.txt
+          echo "sha256:         `shasum    ${COIN_NAME}-win-not_strip-${{ needs.get-version.outputs.version }}.zip`" >> checksums.txt
+          echo "openssl-sha256: `sha256sum ${COIN_NAME}-win-not_strip-${{ needs.get-version.outputs.version }}.zip`" >> checksums.txt
+          cat checksums.txt
+          cd ..
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.COIN_NAME }}-win-${{ needs.get-version.outputs.version }}
+          path: ${{ env.COMPRESS_DIR }}
+
+      - name: Upload Test Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.COIN_NAME }}-win-test-${{ needs.get-version.outputs.version }}
+          path: ${{ env.TEST_DIR }}
+
+      - name: Generate window installation file
+        run: |
+          make deploy
+          mkdir win64-installation
+          mv *.exe win64-installation/
+          cd win64-installation
+          echo "sha256: `shasum *.exe`" >> checksums.txt
+          echo "openssl-sha25: `sha256sum *.exe`" >> checksums.txt
+          cd ..
+
+      - name: Upload Win64 installation file
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.COIN_NAME }}-win-installation-${{ needs.get-version.outputs.version }}
+          path: win64-installation
+          
       build-ubuntu22-arm-64:
         name: Ubuntu 22 ARM 64 bit build
         needs: checking-build-version
