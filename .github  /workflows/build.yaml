@@ -4,7 +4,7 @@
       push:
         branches:
           - main
-          - v100.10.3*
+          - v001.01.1*
           - develop
       pull_request:
         branches:
