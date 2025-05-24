@@ -3,6 +3,7 @@ Springbok Community Cryptocurrency
 ![image](https://raw.githubusercontent.com/Springbok-Community/Springbok/refs/heads/master/SPRINGBOK.png)
 
 
+
 ```
 MIT License
 
