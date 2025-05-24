@@ -1,4 +1,4 @@
-name: Yerbas Build
+name: Springbok Build
 on:
   push:
     branches:
@@ -11,10 +11,10 @@ on:
   workflow_dispatch:
 
 env:
-  COIN_NAME: yerbas
-  BUILD_DIR: yerbas-build
-  COMPRESS_DIR: yerbas-compress
-  TEST_DIR: yerbas-test
+  COIN_NAME: springbok
+  BUILD_DIR: springbok-build
+  COMPRESS_DIR: springbok-compress
+  TEST_DIR: springbok-test
 
 permissions:
     contents: read
@@ -81,7 +81,7 @@ jobs:
         run: |
           echo "building with $(nproc) threads"
           gcc --version
-          export FALLBACK_DOWNLOAD_PATH=https://explorer.yerbas.org/depends/
+          export FALLBACK_DOWNLOAD_PATH=https://explorer.springbok.org/depends/
           make -C depends -j$(nproc)  HOST=x86_64-pc-linux-gnu
 
       - name: Configure
@@ -93,9 +93,9 @@ jobs:
         run: |
           make -j$(nproc)
           mkdir -p ${BUILD_DIR} ${BUILD_DIR}_not_strip ${TEST_DIR}
-          cp src/{yerbas-cli,yerbasd,qt/yerbas-qt} ${BUILD_DIR}/
-          mv src/{yerbas-cli,yerbasd,qt/yerbas-qt} ${BUILD_DIR}_not_strip/
-          mv src/test/test_yerbas ${TEST_DIR}
+          cp src/{springbok-cli,springbokd,qt/springbok-qt} ${BUILD_DIR}/
+          mv src/{springbok-cli,springbokd,qt/springbok-qt} ${BUILD_DIR}_not_strip/
+          mv src/test/test_springbok ${TEST_DIR}
           strip ${BUILD_DIR}/*
 
       - name: Build Debug Binaries
@@ -106,7 +106,7 @@ jobs:
           ./configure --prefix=`pwd`/depends/x86_64-pc-linux-gnu --disable-tests --enable-debug
           make -j$(nproc)
           mkdir -p ${BUILD_DIR}_debug
-          mv src/{yerbas-cli,yerbasd,qt/yerbas-qt} ${BUILD_DIR}_debug/
+          mv src/{springbok-cli,springbokd,qt/springbok-qt} ${BUILD_DIR}_debug/
 
       - name: Generate Checksum and Compress
         run: |
@@ -179,8 +179,8 @@ jobs:
               - name: Run Unit Tests
                 id: Tests
                 run: |
-                  chmod +x test_yerbas
-                  ./test_yerbas --log_format=JUNIT > unit_test_results.xml
+                  chmod +x test_springbok
+                  ./test_springbok --log_format=JUNIT > unit_test_results.xml
         
               - name: Upload Test Artifacts
                 uses: actions/upload-artifact@v4
@@ -216,7 +216,7 @@ jobs:
         run: |
           echo "building with $(nproc) threads"
           gcc --version
-          export FALLBACK_DOWNLOAD_PATH=https://explorer.yerbas.org/depends/
+          export FALLBACK_DOWNLOAD_PATH=https://explorer.springbok.org/depends/
           make -C depends -j$(nproc)  HOST=x86_64-pc-linux-gnu
 
       - name: Configure
@@ -228,9 +228,9 @@ jobs:
         run: |
           make -j$(nproc)
           mkdir -p ${BUILD_DIR} ${BUILD_DIR}_not_strip ${TEST_DIR}
-          cp src/{yerbas-cli,yerbasd,qt/yerbas-qt} ${BUILD_DIR}/
-          mv src/{yerbas-cli,yerbasd,qt/yerbas-qt} ${BUILD_DIR}_not_strip/
-          mv src/test/test_yerbas ${TEST_DIR}
+          cp src/{springbok-cli,springbokd,qt/springbok-qt} ${BUILD_DIR}/
+          mv src/{springbok-cli,springbokd,qt/springbok-qt} ${BUILD_DIR}_not_strip/
+          mv src/test/test_springbok ${TEST_DIR}
           strip ${BUILD_DIR}/*
 
       - name: Build Debug Binaries
@@ -241,7 +241,7 @@ jobs:
           ./configure --prefix=`pwd`/depends/x86_64-pc-linux-gnu --disable-tests --enable-debug
           make -j$(nproc)
           mkdir -p ${BUILD_DIR}_debug
-          mv src/{yerbas-cli,yerbasd,qt/yerbas-qt} ${BUILD_DIR}_debug/
+          mv src/{springbok-cli,springbokd,qt/springbok-qt} ${BUILD_DIR}_debug/
 
       - name: Generate Checksum and Compress
         run: |
@@ -314,8 +314,8 @@ jobs:
       - name: Run Unit Tests
         id: Tests
         run: |
-          chmod +x test_yerbas
-          ./test_yerbas --log_format=JUNIT > unit_test_results.xml
+          chmod +x test_springbok
+          ./test_springbok --log_format=JUNIT > unit_test_results.xml
 
       - name: Upload Test Artifacts
         uses: actions/upload-artifact@v4
@@ -351,7 +351,7 @@ jobs:
       - name: Build Depends
         run: |
           echo "building with 8 threads"
-          export FALLBACK_DOWNLOAD_PATH=https://explorer.yerbas.org/depends/
+          export FALLBACK_DOWNLOAD_PATH=https://explorer.springbok.org/depends/
           make -C depends -j8 HOST=x86_64-apple-darwin20.6.0
 
       - name: Configure
@@ -363,9 +363,9 @@ jobs:
         run: |
           make -j8
           mkdir -p ${BUILD_DIR} ${BUILD_DIR}_not_strip ${TEST_DIR}
-          cp src/{yerbas-cli,yerbasd,qt/yerbas-qt} ${BUILD_DIR}/
-          mv src/{yerbas-cli,yerbasd,qt/yerbas-qt} ${BUILD_DIR}_not_strip/
-          mv src/test/test_yerbas ${TEST_DIR}
+          cp src/{springbok-cli,springbokd,qt/springbok-qt} ${BUILD_DIR}/
+          mv src/{springbok-cli,springbokd,qt/springbok-qt} ${BUILD_DIR}_not_strip/
+          mv src/test/test_springbok ${TEST_DIR}
           strip ${BUILD_DIR}/*
 
       - name: Generate Checksum and Compress
@@ -417,10 +417,10 @@ jobs:
         run: |
           make deploy
           mkdir -p macos-dmg
-          mv Yerbas-Qt.dmg macos-dmg/
+          mv springbok-Qt.dmg macos-dmg/
           cd macos-dmg
-          echo "sha256: `shasum Yerbas-Qt.dmg`" >> checksums.txt
-          echo "openssl-sha256: `openssl sha256 Yerbas-Qt.dmg`" >> checksums.txt
+          echo "sha256: `shasum springbok-Qt.dmg`" >> checksums.txt
+          echo "openssl-sha256: `openssl sha256 springbok-Qt.dmg`" >> checksums.txt
           cd ..
 
       - name: Upload dmg file
@@ -443,8 +443,8 @@ jobs:
       - name: Run Unit Tests
         id: Tests
         run: |
-          chmod +x test_yerbas
-          ./test_yerbas --log_format=JUNIT > unit_test_results.xml
+          chmod +x test_springbok
+          ./test_springbok --log_format=JUNIT > unit_test_results.xml
 
       - name: Upload Test Artifacts
         uses: actions/upload-artifact@v4
@@ -479,7 +479,7 @@ jobs:
       - name: Build Depends
         run: |
           echo "building with $(nproc) threads"
-          export FALLBACK_DOWNLOAD_PATH=https://explorer.yerbas.org/depends/
+          export FALLBACK_DOWNLOAD_PATH=https://explorer.springbok.org/depends/
           make -C depends -j$(nproc) HOST=aarch64-linux-gnu
 
       - name: Configure
@@ -491,8 +491,8 @@ jobs:
         run: |
           make -j$(nproc)
           mkdir -p ${BUILD_DIR} ${TEST_DIR}
-          mv src/{yerbas-cli,yerbasd,qt/yerbas-qt} ${BUILD_DIR}/
-          mv src/test/test_yerbas ${TEST_DIR}/
+          mv src/{springbok-cli,springbokd,qt/springbok-qt} ${BUILD_DIR}/
+          mv src/test/test_springbok ${TEST_DIR}/
 
       - name: Build Debug Binaries
         run: |
@@ -502,7 +502,7 @@ jobs:
           ./configure --prefix=`pwd`/depends/aarch64-linux-gnu --disable-tests --enable-debug
           make -j$(nproc)
           mkdir -p ${BUILD_DIR}_debug
-          mv src/{yerbas-cli,yerbasd,qt/yerbas-qt} ${BUILD_DIR}_debug/
+          mv src/{springbok-cli,springbokd,qt/springbok-qt} ${BUILD_DIR}_debug/
 
       - name: Generate Checksum and Compress
         run: |
@@ -570,8 +570,8 @@ jobs:
           copy_artifact_path: unit_test_results.xml
           copy_artifacts_on_fail: yes
           commands: |
-            chmod +x test_yerbas
-            ./test_yerbas --log_format=JUNIT > unit_test_results.xml
+            chmod +x test_springbok
+            ./test_springbok --log_format=JUNIT > unit_test_results.xml
 
       - name: Upload Test Artifacts
         uses: actions/upload-artifact@v4
@@ -609,22 +609,22 @@ jobs:
       - name: Build Depends
         run: |
           echo "building with $(nproc) threads"
-          export FALLBACK_DOWNLOAD_PATH=https://explorer.yerbas.org/depends/
+          export FALLBACK_DOWNLOAD_PATH=https://explorer.springbok.org/depends/
           make -C depends -j$(nproc) HOST=x86_64-w64-mingw32
 
       - name: Configure
         run: |
           ./autogen.sh
-          export FALLBACK_DOWNLOAD_PATH=https://explorer.yerbas.org/depends/
+          export FALLBACK_DOWNLOAD_PATH=https://explorer.springbok.org/depends/
           ./configure --prefix=`pwd`/depends/x86_64-w64-mingw32
 
       - name: Build Binaries
         run: |
           make -j$(nproc)
           mkdir -p ${BUILD_DIR} ${BUILD_DIR}_not_strip ${TEST_DIR}
-          cp src/{yerbas-cli.exe,yerbasd.exe,qt/yerbas-qt.exe} ${BUILD_DIR}/
-          mv src/{yerbas-cli.exe,yerbasd.exe,qt/yerbas-qt.exe} ${BUILD_DIR}_not_strip/
-          mv src/test/test_yerbas.exe ${TEST_DIR}
+          cp src/{springbok-cli.exe,springbokd.exe,qt/springbok-qt.exe} ${BUILD_DIR}/
+          mv src/{springbok-cli.exe,springbokd.exe,qt/springbok-qt.exe} ${BUILD_DIR}_not_strip/
+          mv src/test/test_springbok.exe ${TEST_DIR}
           strip ${BUILD_DIR}/*
 
       - name: Generate Checksum and Compress
@@ -709,7 +709,7 @@ jobs:
         run: |
           pwd
           dir
-          .\test_yerbas.exe --log_format=JUNIT > unit_test_results.xml
+          .\test_springbok.exe --log_format=JUNIT > unit_test_results.xml
 
       - name: Upload Test Artifacts
         uses: actions/upload-artifact@v4
