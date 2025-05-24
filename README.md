@@ -1,6 +1,6 @@
 Springbok Community Cryptocurrency
 
-![image](https://github.com/user-attachments/assets/925069c8-1768-4106-838f-614cc576e61a)
+![image](https://raw.githubusercontent.com/Springbok-Community/Springbok/refs/heads/master/SPRINGBOK.png)
 
 
 ```
