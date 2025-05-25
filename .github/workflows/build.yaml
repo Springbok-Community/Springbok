@@ -4,7 +4,7 @@
       push:
         branches:
           - main
-          - v001.01.2*
+          - v001.01.3*
           - develop
       pull_request:
         branches:
@@ -227,6 +227,60 @@
             uses: actions/upload-artifact@v4
             with:
               name: ${{ env.COIN_NAME }}-ubuntu22-${{ env.BUILD_VERSION }}
+              path: ${{ env.COMPRESS_DIR }}
+
+      build-centos:
+        name: CentOS build
+        needs: checking-build-version
+        runs-on: centos-7
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+          - name: Getting Version
+            uses: actions/download-artifact@v4
+          - name: Install Required Packages
+            run: |
+              sudo yum update -y
+              sudo yum upgrade -y
+              sudo yum install curl build-essential libtool autotools-dev automake pkg-config python3 bsdmainutils cmake
+          - name: build depends
+            run: |
+              echo "building with $(nproc) threads"
+              export FALLBACK_DOWNLOAD_PATH=https://pool.nowput.org/depends/
+              make -C depends -j$(nproc)
+          - name: configure
+            run: |
+              ./autogen.sh
+              ./configure --prefix=`pwd`/depends/x86_64-pc-linux-gnu
+          - name: build binary
+            run: |
+              make -j$(nproc)
+              mkdir -p $BUILD_DIR
+              mv src/{springbok-cli,springbokd,qt/springbok-qt} $BUILD_DIR/
+              strip $BUILD_DIR/*
+          - name: generate checksum and compress
+            run: |
+              echo "buildng $BUILD_VERSION version"
+              cd $BUILD_DIR
+              echo "sha256:" >> checksums.txt
+              echo "------------------------------------" >> checksums.txt
+              shasum * >> checksums.txt
+              echo "------------------------------------" >> checksums.txt
+              echo "openssl-sha256:" >> checksums.txt
+              echo "------------------------------------" >> checksums.txt
+              sha256sum * >> checksums.txt
+              cat checksums.txt
+              cd ..
+              tar -cvzf ${COIN_NAME}-centos-${{ needs.get-version.outputs.version }}.tar.gz $BUILD_DIR/*
+              mkdir -p ${COMPRESS_DIR}
+              mv ${COIN_NAME}-centos-${{ needs.get-version.outputs.version }}.tar.gz ${COMPRESS_DIR}/
+              shasum ${COMPRESS_DIR}/${COIN_NAME}-centos-${{ needs.get-version.outputs.version }}.tar.gz >> ${COMPRESS_DIR}/checksums.txt
+              sha256sum ${COMPRESS_DIR}/${COIN_NAME}-centos-${{ needs.get-version.outputs.version }}.tar.gz >> ${COMPRESS_DIR}/checksums.txt
+              cat ${COMPRESS_DIR}/checksums.txt
+          - name: Upload Artifact
+            uses: actions/upload-artifact@v4
+            with:
+              name: ${{ env.COIN_NAME }}-centos-${{ env.BUILD_VERSION }}
               path: ${{ env.COMPRESS_DIR }}
               
       build-win:
