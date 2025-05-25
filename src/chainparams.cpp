@@ -282,10 +282,10 @@ public:
         m_assumed_blockchain_size = 45;
         m_assumed_chain_state_size = 1;
 
-        genesis = CreateGenesisBlock(1655239440, 140, 0x20001fff, 4, 10000 * COIN);
+        genesis = CreateGenesisBlock(1748131200, 141, 0x21961fff, 5, 10000000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0xef99ea0231cf5ccee64a5350f79d8b17348f9a72cc1899113c4082c9f6aa1987"));
-        assert(genesis.hashMerkleRoot == uint256S("0xc59206be1307154ab6090c3419137d292f11c2be5585d86447ad0e1ad42de43c"));
+        assert(consensus.hashGenesisBlock == uint256S(""));
+        assert(genesis.hashMerkleRoot == uint256S(""));
 
         // Note that of those which support the service bits prefix, most only support a subset of
         // possible options.
@@ -496,8 +496,8 @@ public:
 
         genesis = CreateGenesisBlock(1655239440, 140, 0x20001fff, 4, 10000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0xef99ea0231cf5ccee64a5350f79d8b17348f9a72cc1899113c4082c9f6aa1987"));
-        assert(genesis.hashMerkleRoot == uint256S("0xc59206be1307154ab6090c3419137d292f11c2be5585d86447ad0e1ad42de43c"));
+        assert(consensus.hashGenesisBlock == uint256S(""));
+        assert(genesis.hashMerkleRoot == uint256S(""));
 
         vFixedSeeds.clear();
         vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_test, pnSeed6_test + ARRAYLEN(pnSeed6_test));
@@ -693,12 +693,12 @@ public:
         m_assumed_chain_state_size = 0;
 
         UpdateDevnetSubsidyAndDiffParametersFromArgs(args);
-        genesis = CreateGenesisBlock(1655239440, 140, 0x20001fff, 4, 10000 * COIN);
+        genesis = CreateGenesisBlock(1748131200, 141, 0x21961fff, 5, 10000000 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0xef99ea0231cf5ccee64a5350f79d8b17348f9a72cc1899113c4082c9f6aa1987"));
-        assert(genesis.hashMerkleRoot == uint256S("0xc59206be1307154ab6090c3419137d292f11c2be5585d86447ad0e1ad42de43c"));
+        assert(consensus.hashGenesisBlock == uint256S(""));
+        assert(genesis.hashMerkleRoot == uint256S(""));
 
-        devnetGenesis = FindDevNetGenesisBlock(genesis, 10000 * COIN);
+        devnetGenesis = FindDevNetGenesisBlock(genesis, 10000000 * COIN);
         consensus.hashDevnetGenesisBlock = devnetGenesis.GetHash();
 
         vFixedSeeds.clear();
