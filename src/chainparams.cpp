@@ -299,7 +299,7 @@ public:
         vSeeds.emplace_back("dnsseed-05.springbok.org");
 
         // SPRINGBOK addresses start with 'X'
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,76);
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>{0x3f, 0x05};
         // SPRINGBOK script addresses start with '7'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,16);
         // SPRINGBOK private keys start with '7' or 'X'
